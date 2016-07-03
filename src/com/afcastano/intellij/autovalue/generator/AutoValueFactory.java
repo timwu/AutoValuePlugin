@@ -122,13 +122,15 @@ public class AutoValueFactory {
 
         if (name.startsWith("get") && name.length() > 3) {
             if (Character.isUpperCase(name.charAt(3))) {
-                name = name.replaceFirst("get", "set");
-                parameterName = name.replaceFirst("set", "new");
+                name = name.substring(3);
+                name = name.substring(0, 1).toLowerCase() + name.substring(1);
+                parameterName = name;
             }
         } else if (name.startsWith("is") && name.length() > 2) {
             if (Character.isUpperCase(name.charAt(2))) {
-                name = name.replaceFirst("is", "set");
-                parameterName = name.replaceFirst("set", "new");
+                name = name.substring(2);
+                name = name.substring(0, 1).toLowerCase() + name.substring(1);
+                parameterName = name;
             }
         }
         final PsiMethod method = factory.createMethod(name, getBuilderType());
