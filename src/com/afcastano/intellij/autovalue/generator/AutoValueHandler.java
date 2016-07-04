@@ -87,6 +87,7 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
         final List<PsiMethod> pendingRemoveBuilderMethods = generateExtraMethods(factory, targetClass, builderClass);
 
         final PsiMethod builderFactoryMethod = factory.newBuilderFactoryMethod();
+        final PsiMethod copyBuilderMethod = factory.newCopyBuilderFactoryMethod();
 
         final PsiMethod lastMethod = targetClass.getMethods()[targetClass.getMethods().length - 1];
 
@@ -124,6 +125,9 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
                     targetClass.addAfter(builderFactoryMethod, lastMethod);
                 }
 
+                if (!containsCopyBuilderMethod(targetClass)) {
+                    targetClass.addAfter(copyBuilderMethod, lastMethod);
+                }
             }
         };
 
@@ -157,6 +161,10 @@ public class AutoValueHandler implements CodeInsightActionHandler, ContextAwareA
     //TODO Duplicated logic on factory
     private boolean containsBuilderFactoryMethod(PsiClass targetClass) {
         return targetClass.findMethodsByName("builder", true).length != 0;
+    }
+
+    private boolean containsCopyBuilderMethod(PsiClass targetClass) {
+        return targetClass.findMethodsByName("copyBuilder", true).length != 0;
     }
 
     private boolean containsBuildMethod(PsiClass builderClass) {

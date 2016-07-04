@@ -162,6 +162,28 @@ public class AutoValueFactory {
 
     }
 
+    public PsiMethod newCopyBuilderFactoryMethod() {
+        final PsiMethod builderMethod = factory.createMethod("copyBuilder", getBuilderType());
+        builderMethod.getModifierList().setModifierProperty("public", true);
+
+        String generatedName = "";
+
+        for(PsiClass parent: findAllParents(getTargetClass())) {
+            generatedName = generatedName + parent.getName() + "_";
+        }
+
+        generatedName = generatedName + getTargetClass().getName();
+
+        String autoValueAnnotationName = StringUtil.getShortName(autoValueAnnotation.getQualifiedName());
+        String returnStatementText = "return new " + autoValueAnnotationName + "_" + generatedName + ".Builder(this);";
+
+        PsiStatement returnStatement = factory.createStatementFromText(returnStatementText, getTargetClass());
+
+        builderMethod.getBody().add(returnStatement);
+        return builderMethod;
+    }
+
+
     public PsiMethod newBuilderFactoryMethod() {
         final PsiMethod builderMethod = factory.createMethod("builder", getBuilderType());
         builderMethod.getModifierList().setModifierProperty("public", true);
